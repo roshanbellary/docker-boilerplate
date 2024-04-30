@@ -5,7 +5,7 @@ import 'dotenv/config';
 const main = async () => {
   // Listen for termination
   process.on('SIGTERM', () => process.exit());
-
+  // comment
   // Set up the datbase connection
   const dbConnection = await MongoConnection.getInstance();
   dbConnection.open();
