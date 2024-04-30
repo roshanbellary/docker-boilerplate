@@ -1,0 +1,36 @@
+name: Docker Tests
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-run:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Use MongoDB Atlas URI
+        env:
+          ATLAS_URI: ${{ secrets.ATLAS_URI }}
+        run: |
+          # Use $ATLAS_URI in your commands or scripts
+          echo $ATLAS_URI
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Build and run React frontend
+        working-directory: ./client
+        run: |
+          docker build -t reactfrontend .
+          docker run --name reactfrontend-container -d -p 3000:3000 reactfrontend yarn test
+      
+      - name: Build and run Node backend
+        working-directory: ./server
+        run: |
+          docker build -t nodebackend .
+          docker run --name nodebackend-container -d -p 4000:4000 --env-file .env nodebackend yarn test
